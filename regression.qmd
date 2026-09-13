@@ -1,0 +1,195 @@
+---
+title: "regression"
+author: Lei Huang
+format: html
+editor: visual
+---
+
+## 1. Aim
+
+This workflow generates simulated data and explores the relationship between two variables. It demonstrates how text, R code, and results can be combined in a reproducible report.
+
+## 2. Data generation
+
+The data are simulated and do not represent real observations. Both variables are dimensionless.
+
+We generate 100 observations using the following model:
+
+$$
+y_i = 2 + 3x_i + \varepsilon_i
+$$
+
+where:
+
+$$
+x_i \sim \mathrm{Uniform}(0, 10),
+\qquad
+\varepsilon_i \sim N(0, 2^2).
+$$
+
+The random errors are generated independently of x. A fixed random seed is used to make the simulation reproducible under the same random-number settings.
+
+```{r}
+# Set the random seed
+set.seed(123)
+
+# Generate the simulated data
+n <- 100
+x <- runif(n, min = 0, max = 10)
+error <- rnorm(n, mean = 0, sd = 2)
+y <- 2 + 3 * x + error
+
+# Store the data
+sim_data <- data.frame(x = x, y = y)
+
+# Export the simulated data in a common format
+write.csv(sim_data, "simulated_data.csv", row.names = FALSE)
+
+# Display the first six observations
+head(sim_data)
+```
+
+## 3. Summary statistics
+
+The following output summarises the two simulated variables.
+
+```{r}
+summary(sim_data)
+```
+
+## 4. Visualisation
+
+The scatter plot shows the relationship between x and y. The red line represents the mean relationship used to generate the data. It is not fitted to the observations.
+
+```{r}
+# Plot the simulated observations
+plot(
+  sim_data$x, sim_data$y,
+  main = "Simulated linear relationship",
+  xlab = "x",
+  ylab = "y",
+  pch = 19,
+  col = "steelblue"
+)
+
+# Add the true mean relationship
+abline(a = 2, b = 3, col = "red", lwd = 2)
+```
+
+The observations show a positive relationship between x and y. They vary around the red line because the model includes random error.
+
+## 5. Software requirements and version pinning
+
+This workflow was tested on Windows using R 4.3.3 and Quarto 1.5.57.
+The simulation, summary statistics, and plot use functions included
+with R. Report rendering requires knitr and rmarkdown, together
+with their dependencies.
+
+The R package versions are recorded in renv.lock.
+Exact package versions are used to reduce differences caused by
+package updates and to help other users recreate the tested environment.
+
+To reproduce this workflow:
+
+1. Install R 4.3.3 and Quarto 1.5.57.
+2. Download the complete project and open its RStudio project file.
+3. Run the following command in the R Console to restore the
+   recorded R package versions:
+
+```r
+renv::restore()
+```
+
+4. Render analysis.qmd using the Render button in RStudio,
+   or run the following command in a terminal from the project folder:
+
+```bash
+quarto render analysis.qmd
+```
+
+The renv lockfile records the R version, but renv does not install R
+or Quarto. These tools must be installed separately.
+An internet connection is normally needed to download the required
+packages during setup.
+
+The following output records the R session used to render this report.
+
+```{r}
+sessionInfo()
+```
+
+## 6. Risk assessment
+
+The analysis uses functions included with R and has few external
+dependencies. This reduces the number of packages that could affect
+the numerical results. However, changes to R or its random-number
+settings could affect the simulated data.
+
+Report generation also depends on Quarto, knitr, rmarkdown, and
+their dependencies. Future updates could change the report appearance
+or cause rendering errors. Using the tested software versions and
+restoring the recorded package versions reduces these risks.
+
+Version pinning does not guarantee that the workflow will always run.
+Older package versions may become harder to obtain or install.
+Installation on another operating system may require additional
+system tools. This workflow has only been tested on Windows.
+
+Before updating the recorded environment, the complete report should
+be rendered again. The generated data, summary statistics, and plot
+should be compared with the previous output. The lockfile should only
+be updated after checking that the revised environment works.
+
+## 7. Discussion of FAIR principles
+
+FAIR stands for Findable, Accessible, Interoperable, and Reusable.
+This section discusses how the workflow supports these principles
+and what still needs to be completed.
+
+### Findable
+
+The report has a descriptive title and identifies its author.
+The project will be shared on GitHub with a README, a short
+description, and relevant keywords, such as R, simulation,
+reproducibility, and FAIR.
+
+These details will help users find and understand the project.
+However, the project does not currently have a persistent identifier,
+such as a DOI.
+
+### Accessible
+
+The planned public GitHub repository will allow users to download
+the source document, simulated data, and environment files.
+The HTML report will allow users to read the results without
+running R.
+
+The workflow generates its own data and does not require access
+to an external dataset. However, long-term access will depend on
+the repository remaining available.
+
+### Interoperable
+
+The simulated data are exported as a CSV file, which can be read
+by different software tools. Each row represents one simulated
+observation. The columns x and y are numeric and have no physical
+units. Their definitions and the data-generation model are
+provided in this report.
+
+The source document uses plain text, and the report is available
+in HTML. These formats support exchange between tools.
+However, the project does not use a formal metadata vocabulary,
+so its support for automated interpretation is limited.
+
+### Reusable
+
+The report explains the simulation model, sample size, random seed,
+and analysis steps. The data are clearly identified as simulated.
+The software requirements and renv.lock help users recreate
+the tested environment.
+
+A license and README still need to be added before sharing.
+These will clarify the permitted uses and explain how to run
+the project. The simulated data are suitable for demonstrating
+a workflow, but they do not provide evidence about a real-world
+relationship.
